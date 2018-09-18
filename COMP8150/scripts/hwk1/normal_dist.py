@@ -17,7 +17,8 @@ q1 = norm.ppf(.25)
 median = norm.ppf(.5)
 q3 = norm.ppf(.75)
 
-plt.title('Gaussian Distribution ($\mu$: {}, $\sigma$: {}, $\sigma^2$: {})'.format(mean, std, var), size='xx-large')
+plt.title('Gaussian Distribution ($\mu$: {:.2f}, $\sigma$: {:.2f}, $\sigma^2$: {:.2f})'.format(mean, std, var),
+          size='xx-large')
 plt.xlabel('X', size='large')
 plt.ylabel('P(X)', size='large')
 
@@ -42,7 +43,8 @@ pts = norm.rvs(size=samp_size)
 # Add histogram
 
 ys = [.005] * samp_size
-plt.hist(pts, bins=20, facecolor='purple', alpha=0.45, density=True, weights=np.ones_like(pts) / float(len(pts)), edgecolor='black',
+plt.hist(pts, bins=20, facecolor='purple', alpha=0.45, density=True, weights=np.ones_like(pts) / float(len(pts)),
+         edgecolor='black',
          linewidth=1.0)
 plt.plot(pts, ys, 'bx')
 
@@ -54,10 +56,10 @@ var_sample = np.var(pts)
 mean_sample = np.mean(pts)
 q1_sample, median_sample, q3_sample = np.percentile(pts, [25, 50, 75])
 
-print('mean: {}, mean(sample): {}'.format(mean, mean_sample))
-print('var: {}, var(sample): {}'.format(var, var_sample))
-print('std: {}, std(sample): {}'.format(std, std_sample))
+print('mean: {:.2f}, mean(sample): {:.2f}'.format(mean, mean_sample))
+print('var: {:.2f}, var(sample): {:.2f}'.format(var, var_sample))
+print('std: {:.2f}, std(sample): {:.2f}'.format(std, std_sample))
 
-print('q1: {}, q1(sample): {}'.format(q1, q1_sample))
-print('median: {}, median(sample): {}'.format(median, median_sample))
-print('q3: {}, q3(sample): {}'.format(q3, q3_sample))
+print('q1: {:.2f}, q1(sample): {:.2f}'.format(q1, q1_sample))
+print('median: {:.2f}, median(sample): {:.2f}'.format(median, median_sample))
+print('q3: {:.2f}, q3(sample): {:.2f}'.format(q3, q3_sample))
