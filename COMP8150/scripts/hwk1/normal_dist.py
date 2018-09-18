@@ -36,13 +36,28 @@ plt.text(median + (q3 - median) / 2.0 - horiz_text_offset, vert_text_offset, 'Q3
 plt.text(q3 + (x[-1] - q3) / 2.0 - horiz_text_offset, vert_text_offset, 'Q4', color='black', size='xx-large')
 
 # Random samples
-samp_size = 100
+samp_size = 10000
 pts = norm.rvs(size=samp_size)
 
 # Add histogram
 
 ys = [.005] * samp_size
-plt.hist(pts, bins=20, facecolor='purple', alpha=0.45, density=True, edgecolor='black', linewidth=1.0)
+plt.hist(pts, bins=20, facecolor='purple', alpha=0.45, density=True, weights=np.ones_like(pts) / float(len(pts)), edgecolor='black',
+         linewidth=1.0)
 plt.plot(pts, ys, 'bx')
 
 plt.show()
+
+# Sample statistics
+std_sample = np.std(pts)
+var_sample = np.var(pts)
+mean_sample = np.mean(pts)
+q1_sample, median_sample, q3_sample = np.percentile(pts, [25, 50, 75])
+
+print('mean: {}, mean(sample): {}'.format(mean, mean_sample))
+print('var: {}, var(sample): {}'.format(var, var_sample))
+print('std: {}, std(sample): {}'.format(std, std_sample))
+
+print('q1: {}, q1(sample): {}'.format(q1, q1_sample))
+print('median: {}, median(sample): {}'.format(median, median_sample))
+print('q3: {}, q3(sample): {}'.format(q3, q3_sample))

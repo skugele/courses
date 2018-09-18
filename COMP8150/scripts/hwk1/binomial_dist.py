@@ -27,12 +27,12 @@ plt.xlabel('X', size='large')
 plt.ylabel('P(X)', size='large')
 
 # Quartile lines
-ax.axvline(x=q1, linewidth=3, alpha=0.6, color='red', linestyle='dashed')
-ax.axvline(x=median, linewidth=3, alpha=0.6, color='red', linestyle='dashed')
-ax.axvline(x=q3, linewidth=3, alpha=0.6, color='red', linestyle='dashed')
+ax.axvline(x=q1, linewidth=3, alpha=0.6, color='black', linestyle='dashed')
+ax.axvline(x=median, linewidth=3, alpha=0.6, color='black', linestyle='dashed')
+ax.axvline(x=q3, linewidth=3, alpha=0.6, color='black', linestyle='dashed')
 
-horiz_text_offset = 0.6
-vert_text_offset = 0.1
+horiz_text_offset = 0.3
+vert_text_offset = 0.075
 
 plt.xlim(x[0], x[-1])
 plt.text(x[0] + (q1 - x[0]) / 2.0 - horiz_text_offset, vert_text_offset, 'Q1', color='black', size='x-large')
@@ -46,8 +46,22 @@ pts = binom.rvs(n, p, size=samp_size)
 
 # Add histogram for sampled points
 ys = [.005] * samp_size
-plt.hist(pts, bins=7, facecolor='purple', alpha=0.45, weights=np.ones_like(pts) / float(len(pts)), density=False,
-         edgecolor='black', linewidth=1.0)
+plt.hist(pts, bins=7, facecolor='purple', alpha=0.35, weights=np.ones_like(pts) / float(len(pts)), density=False,
+         edgecolor='black', linewidth=0.5)
 plt.plot(pts, ys, 'bx')
 
 plt.show()
+
+# Sample statistics
+std_sample = np.std(pts)
+var_sample = np.var(pts)
+mean_sample = np.mean(pts)
+q1_sample, median_sample, q3_sample = np.percentile(pts, [25, 50, 75])
+
+print('mean: {}, mean(sample): {}'.format(mean, mean_sample))
+print('var: {}, var(sample): {}'.format(var, var_sample))
+print('std: {}, std(sample): {}'.format(std, std_sample))
+
+print('q1: {}, q1(sample): {}'.format(q1, q1_sample))
+print('median: {}, median(sample): {}'.format(median, median_sample))
+print('q3: {}, q3(sample): {}'.format(q3, q3_sample))
