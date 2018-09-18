@@ -37,7 +37,7 @@ plt.text(median + (q3 - median) / 2.0 - horiz_text_offset, vert_text_offset, 'Q3
 plt.text(q3 + (x[-1] - q3) / 2.0 - horiz_text_offset, vert_text_offset, 'Q4', color='black', size='xx-large')
 
 # Random samples
-samp_size = 10000
+samp_size = 100
 pts = norm.rvs(size=samp_size)
 
 # Add histogram
