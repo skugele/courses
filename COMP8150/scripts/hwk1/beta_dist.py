@@ -1,6 +1,6 @@
-from scipy.stats import beta
 import matplotlib.pyplot as plt
 import numpy as np
+from scipy.stats import beta
 
 np.random.seed(3)
 
@@ -42,7 +42,7 @@ pts = beta.rvs(a, b, size=samp_size)
 
 # Add histogram
 
-ys = [.005]*samp_size
+ys = [.005] * samp_size
 plt.hist(pts, bins=20, facecolor='purple', alpha=0.45, normed=True, edgecolor='black', linewidth=1.0)
 plt.plot(pts, ys, 'bx')
 

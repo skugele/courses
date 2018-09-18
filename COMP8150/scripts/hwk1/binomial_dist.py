@@ -1,26 +1,27 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from scipy.stats import hypergeom
+from scipy.stats import binom
 
-np.random.seed(5)
+np.random.seed(1)
 
-M, n, N = 50, 25, 25
+# Binomial Distribution
+n = 10
+p = 0.3
 
-mean, var = hypergeom.stats(M, n, N, loc=0, moments='mv')
-std = hypergeom.std(M, n, N)
+mean, var = binom.stats(n, p, loc=0, moments='mv')
+std = binom.std(n, p)
 x = np.arange(0, n + 1)
-pmf = hypergeom(M, n, N).pmf(x)
+pmf = binom(n, p).pmf(x)
 
 fig, ax = plt.subplots(1, 1)
 
-ax.plot(x, pmf, 'b-', lw=3, alpha=0.6, label='Hypergeometric')
+ax.plot(x, pmf, 'b-', lw=3, alpha=0.6, label='bnom')
 
-q1 = hypergeom.ppf(.25, M, n, N)
-median = hypergeom.ppf(.5, M, n, N)
-q3 = hypergeom.ppf(.75, M, n, N)
+q1 = binom.ppf(.25, n, p)
+median = binom.ppf(.5, n, p)
+q3 = binom.ppf(.75, n, p)
 
-plt.title('Hypergeometric Distribution \n($\mu$: {}, $\sigma$: {}, $\sigma^2$: {})'.format(mean, std, var),
-          size='xx-large')
+plt.title('Binomial Distribution \n($\mu$: {}, $\sigma$: {}, $\sigma^2$: {})'.format(mean, std, var), size='xx-large')
 
 plt.xlabel('X', size='large')
 plt.ylabel('P(X)', size='large')
@@ -33,7 +34,7 @@ ax.axvline(x=q3, linewidth=3, alpha=0.6, color='red', linestyle='dashed')
 horiz_text_offset = 0.6
 vert_text_offset = 0.1
 
-plt.xlim(0, 21)
+plt.xlim(x[0], x[-1])
 plt.text(x[0] + (q1 - x[0]) / 2.0 - horiz_text_offset, vert_text_offset, 'Q1', color='black', size='x-large')
 plt.text(q1 + (median - q1) / 2.0 - horiz_text_offset, vert_text_offset, 'Q2', color='black', size='x-large')
 plt.text(median + (q3 - median) / 2.0 - horiz_text_offset, vert_text_offset, 'Q3', color='black', size='x-large')
@@ -41,11 +42,11 @@ plt.text(q3 + (x[-1] - q3) / 2.0 - horiz_text_offset, vert_text_offset, 'Q4', co
 
 # Random samples
 samp_size = 100
-pts = hypergeom.rvs(M, n, N, size=samp_size)
+pts = binom.rvs(n, p, size=samp_size)
 
 # Add histogram for sampled points
 ys = [.005] * samp_size
-plt.hist(pts, bins=10, facecolor='purple', alpha=0.45, weights=np.ones_like(pts) / float(len(pts)), density=False,
+plt.hist(pts, bins=7, facecolor='purple', alpha=0.45, weights=np.ones_like(pts) / float(len(pts)), density=False,
          edgecolor='black', linewidth=1.0)
 plt.plot(pts, ys, 'bx')
 

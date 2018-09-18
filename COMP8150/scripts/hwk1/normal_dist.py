@@ -1,9 +1,8 @@
-from scipy.stats import norm
 import matplotlib.pyplot as plt
 import numpy as np
+from scipy.stats import norm
 
 np.random.seed(5)
-
 
 # Normal Distribution
 mean, var = norm.stats(moments='mv')
@@ -31,7 +30,7 @@ horiz_text_offset = .1
 vert_text_offset = 0.25
 
 plt.xlim(x[0], x[-1])
-plt.text(x[0] + (q1 - x[0])/2.0 - horiz_text_offset, vert_text_offset, 'Q1', color='black', size='xx-large')
+plt.text(x[0] + (q1 - x[0]) / 2.0 - horiz_text_offset, vert_text_offset, 'Q1', color='black', size='xx-large')
 plt.text(q1 + (median - q1) / 2.0 - horiz_text_offset, vert_text_offset, 'Q2', color='black', size='xx-large')
 plt.text(median + (q3 - median) / 2.0 - horiz_text_offset, vert_text_offset, 'Q3', color='black', size='xx-large')
 plt.text(q3 + (x[-1] - q3) / 2.0 - horiz_text_offset, vert_text_offset, 'Q4', color='black', size='xx-large')
@@ -42,7 +41,7 @@ pts = norm.rvs(size=samp_size)
 
 # Add histogram
 
-ys = [.005]*samp_size
+ys = [.005] * samp_size
 plt.hist(pts, bins=20, facecolor='purple', alpha=0.45, density=True, edgecolor='black', linewidth=1.0)
 plt.plot(pts, ys, 'bx')
 
