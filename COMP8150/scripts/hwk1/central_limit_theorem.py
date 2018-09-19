@@ -12,7 +12,6 @@ p = 0.1
 pop_mean, pop_var = binom.stats(n, p, loc=0, moments='mv')
 pop_std = binom.std(n, p)
 
-
 # Random samples
 x = np.arange(0, n + 1)
 pmf = binom(n, p).pmf(x)
@@ -21,8 +20,7 @@ pmf = binom(n, p).pmf(x)
 skews = []
 kurtoses = []
 
-
-samp_sizes = [5,10,50,100]
+samp_sizes = [5, 10, 50, 100]
 for i, samp_size in enumerate(samp_sizes, start=1):
     means = []
     for sample in range(10000):
@@ -38,7 +36,8 @@ for i, samp_size in enumerate(samp_sizes, start=1):
     plt.xlabel('X', size='large')
     plt.ylabel('$\mathcal{N}(X)$', size='large')
 
-    plt.hist(means, bins=100, facecolor='purple', weights = np.ones_like(means)/len(means), density=False, alpha=0.35, edgecolor='black', linewidth=0.5)
+    plt.hist(means, bins=100, facecolor='purple', weights=np.ones_like(means) / len(means), density=False, alpha=0.35,
+             edgecolor='black', linewidth=0.5)
 
 plt.subplots_adjust(hspace=.7)
 plt.subplots_adjust(wspace=.4)
@@ -59,4 +58,3 @@ plt.ylabel('Kurtosis', size='large')
 plt.plot(samp_sizes, kurtoses)
 plt.show()
 plt.gcf().clear()
-
