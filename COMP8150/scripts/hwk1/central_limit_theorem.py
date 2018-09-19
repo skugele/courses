@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from scipy.stats import binom
+from scipy.stats import binom, skew, kurtosis
 
 np.random.seed(1)
 
@@ -17,12 +17,21 @@ pop_std = binom.std(n, p)
 x = np.arange(0, n + 1)
 pmf = binom(n, p).pmf(x)
 
+# Sample statistics
+skews = []
+kurtoses = []
+
+
 samp_sizes = [5,10,50,100]
 for i, samp_size in enumerate(samp_sizes, start=1):
     means = []
     for sample in range(10000):
         pts = binom.rvs(n, p, size=samp_size)
         means.append(np.mean(pts))
+
+    # Calculate sample statistics
+    skews.append(abs(skew(means)))
+    kurtoses.append(abs(kurtosis(means)))
 
     plt.subplot(2, 2, i)
     plt.title('Histogram of Binomial Sample Means\n(Sample Size per Mean: {})'.format(samp_size), size='large')
@@ -35,30 +44,19 @@ plt.subplots_adjust(hspace=.7)
 plt.subplots_adjust(wspace=.4)
 plt.show()
 
-# # Sample statistics
-# skew = skew(means)
-# kurtosis = kurtosis(np.ndarray(means))
+plt.gcf().clear()
 
-# plt.hist(means, bins=100, facecolor='purple', alpha=0.35, density=False, edgecolor='black', linewidth=0.5)
+plt.title('Skew As A Function Of Sample Size $N$', size='large')
+plt.xlabel('Sample Size ($N$)', size='large')
+plt.ylabel('Skew', size='large')
+plt.plot(samp_sizes, skews)
+plt.show()
+plt.gcf().clear()
 
-
-#
-#
-#
-# # Add histogram for sampled points
-# ys = [.005] * samp_size
-
-# plt.plot(pts, ys, 'bx')
-
-
-
-# Normal Distribution
-# mean, var = norm.stats(moments='mv', mean=10)
-# std = norm.std()
-#
-# x = np.linspace(norm.ppf(0.05), norm.ppf(0.95))
-# plt.plot(x, norm.pdf(x), 'b-', lw=3, alpha=0.6, label='Gaussian')
-#
-# plt.show()
-#
+plt.title('Kurtosis As A Function Of Sample Size $N$', size='large')
+plt.xlabel('Sample Size ($N$)', size='large')
+plt.ylabel('Kurtosis', size='large')
+plt.plot(samp_sizes, kurtoses)
+plt.show()
+plt.gcf().clear()
 
