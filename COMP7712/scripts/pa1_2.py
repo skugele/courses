@@ -1,17 +1,26 @@
-from functions import poly_divide
+from functions import poly_multiply
 from polynomial import Polynomial
 
 # Solution to PA1 (2)
 if __name__ == '__main__':
     try:
-        p_spec = input('Please specify a polynomial: ')
-        p1 = Polynomial(p_spec.split(' '))
+        polynomials = []
 
-        a = float(input('Please provide a number: '))
-        p2 = Polynomial([1, 1, 0, -a])
+        n_list = input('Please specify a list of numbers: ').split(' ')
 
-        q, r = poly_divide(p1, p2)
-        print('Quotient: {}\nRemainder: {}'.format(q, r))
+        for n in n_list:
+            polynomials.append(Polynomial([1, 1, 0, -float(n)]))
+
+        print('Computing: ', ''.join(map(lambda p: '({})'.format(str(p)), polynomials)))
+
+        result = None
+        for p in polynomials:
+            if not result:
+                result = p
+            else:
+                result = poly_multiply(p, result)
+
+        print('Result: ', result)
 
     except Exception as e:
         print(e)
