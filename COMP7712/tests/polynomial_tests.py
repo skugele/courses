@@ -70,3 +70,26 @@ class PolynomialTest(TestCase):
 
         p3 = Polynomial('13 2.0 9 5.173 6 -4 0 -0.25')
         self.assertEqual(str(p3), '2x^13 + 5.17x^9 - 4x^6 - 0.25')
+
+    def test_approx_equal(self):
+        p1 = Polynomial([1, 1])
+        p2 = Polynomial([1, 1])
+
+        self.assertTrue(p1.approx_equal(p2))
+
+        p1 = Polynomial([1, 1])
+        p2 = Polynomial([1, 2])
+
+        self.assertFalse(p1.approx_equal(p2))
+
+        p1 = Polynomial([1, 1])
+        p2 = Polynomial([1, 1.000001])
+
+        self.assertTrue(p1.approx_equal(p2, abs_tol=0.00001))
+        self.assertFalse(p1.approx_equal(p2, abs_tol=0.00000001))
+
+        p1 = Polynomial([2, 1.0, 1, 1.0, 0, 1.1])
+        p2 = Polynomial([2, 1.001, 1, 1.01, 0, 1.101])
+
+        self.assertTrue(p1.approx_equal(p2, abs_tol=0.011))
+        self.assertFalse(p1.approx_equal(p2, abs_tol=0.01))

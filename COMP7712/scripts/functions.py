@@ -1,7 +1,25 @@
 from polynomial import Polynomial
 
 
-def synthetic_division(p1, p2):
+def poly_multiply(p1, p2):
+    # Initialize result polynomial
+    r_degree = p1.degree + p2.degree
+
+    r_spec = []
+    for i in range(r_degree, -1, -1):
+        r_spec.extend([i, 0])
+
+    r = Polynomial(r_spec)
+
+    # Calculate coefficient values for result polynomial
+    for i in range(p1.degree + 1):
+        for j in range(p2.degree + 1):
+            r[i + j] += p1[i] * p2[j]
+
+    return r
+
+
+def poly_divide(p1, p2):
     if not (isinstance(p1, Polynomial) and isinstance(p2, Polynomial)):
         raise ValueError('Both arguments must be polynomials')
 

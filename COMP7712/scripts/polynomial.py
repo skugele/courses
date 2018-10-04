@@ -59,6 +59,17 @@ class Polynomial(object):
 
         return False
 
+    def approx_equal(self, other, abs_tol=0.0, rel_tol=1e-09):
+        if isinstance(other, Polynomial):
+            if len(list(self.coefficients)) != len(list(other.coefficients)):
+                return False
+
+            for c1, c2 in zip(self.coefficients, other.coefficients):
+                if abs(c1 - c2) > max(rel_tol * max(abs(c1), abs(c2)), abs_tol):
+                    return False
+
+        return True
+
     def __len__(self):
         return len(self._terms)
 
