@@ -1,33 +1,3 @@
-def synthetic_division(p1, p2):
-    if not (isinstance(p1, Polynomial) and isinstance(p2, Polynomial)):
-        raise ValueError('Both arguments must be polynomials')
-
-    if p1 == p2:
-        return Polynomial('0 1'), 0
-
-    if p2.degree != 1:
-        raise ValueError('Divisor must be degree 1 polynomial')
-
-    if p2[1] != 1:
-        raise ValueError('Leading coefficient of divisor must be 1')
-
-    div = -p2[0]
-    result = []
-    for c in p1.coefficients:
-        if len(result) == 0:
-            result.append(c)
-        else:
-            result.append(c + div * result[-1])
-
-    remainder = result.pop()
-    poly_spec = []
-    for exp, coeff in zip(range(len(result) - 1, -1, -1), result):
-        poly_spec.append(exp)
-        poly_spec.append(coeff)
-
-    return Polynomial(poly_spec), remainder
-
-
 class Polynomial(object):
     def __init__(self, spec):
         self._spec = spec
@@ -43,7 +13,7 @@ class Polynomial(object):
             raise ValueError('Number of coefficients must match number of exponents')
 
         # Allocating space for each term
-        self._terms = [0] * (int(self._spec[0]) + 1)
+        self._terms = [0.0] * (int(self._spec[0]) + 1)
 
         for exp, coeff in zip(self._spec[0::2], self._spec[1::2]):
             self._terms[int(exp)] = float(coeff)
@@ -100,18 +70,3 @@ class Polynomial(object):
     def coefficients(self):
         for c in reversed(self._terms):
             yield c
-
-
-if __name__ == '__main__':
-    try:
-        p_spec = input('Please specify a polynomial: ')
-        p1 = Polynomial(p_spec.split(' '))
-
-        a = float(input('Please provide a number: '))
-        p2 = Polynomial([1, 1, 0, -a])
-
-        q, r = synthetic_division(p1, p2)
-        print('Quotient: {}\nRemainder: {}'.format(q, r))
-
-    except Exception as e:
-        print(e)

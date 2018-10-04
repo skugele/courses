@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from pa1 import Polynomial, synthetic_division
+from polynomial import Polynomial
 
 
 class PolynomialTest(TestCase):
@@ -70,42 +70,3 @@ class PolynomialTest(TestCase):
 
         p3 = Polynomial('13 2.0 9 5.173 6 -4 0 -0.25')
         self.assertEqual(str(p3), '2x^13 + 5.17x^9 - 4x^6 - 0.25')
-
-
-class SyntheticDivisionTest(TestCase):
-
-    def test_valid(self):
-        p1 = Polynomial('1 1 0 1')
-        p2 = Polynomial('1 1 0 1')
-
-        q, r = synthetic_division(p1, p2)
-        self.assertEqual(q, Polynomial('0 1'))
-        self.assertEqual(r, 0)
-
-        p1 = Polynomial('4 3 2 7 1 -1 0 3')
-        p2 = Polynomial('1 1 0 -1')
-
-        q, r = synthetic_division(p1, p2)
-        self.assertEqual(q, Polynomial('3 3 2 3 1 10 0 9'))
-        self.assertEqual(r, 12)
-
-        p1 = Polynomial('3 1 2 -12 0 -42')
-        p2 = Polynomial('1 1 0 -3')
-
-        q, r = synthetic_division(p1, p2)
-        self.assertEqual(q, Polynomial('2 1 1 -9 0 -27'))
-        self.assertEqual(r, -123)
-
-        p1 = Polynomial('5 42 3 -19 0 -13')
-        p2 = Polynomial('1 1 0 20')
-
-        q, r = synthetic_division(p1, p2)
-        self.assertEqual(q, Polynomial('4 42 3 -840 2 16781 1 -335620 0 6712400'))
-        self.assertEqual(r, -134248013)
-
-    def test_invalid(self):
-        self.assertRaises(ValueError, synthetic_division, Polynomial('1 2'), 2)
-        self.assertRaises(ValueError, synthetic_division, 2, Polynomial('1 2'))
-        self.assertRaises(ValueError, synthetic_division, 2, 2)
-
-        self.assertRaises(ValueError, synthetic_division, Polynomial('3 5 1 2'), Polynomial('2 1 0 1'))
