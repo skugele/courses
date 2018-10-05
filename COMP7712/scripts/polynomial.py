@@ -75,7 +75,13 @@ class Polynomial(object):
 
     @property
     def degree(self):
-        return len(self) - 1
+        degree = len(self) - 1
+
+        c = self.coefficients
+        while next(c, None) == 0:
+            degree -= 1
+
+        return None if degree < 0 else degree
 
     @property
     def coefficients(self):

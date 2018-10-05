@@ -50,6 +50,10 @@ class PolynomialTest(TestCase):
         self.assertEqual(Polynomial('0 1').degree, 0)
         self.assertEqual(Polynomial('1 7').degree, 1)
         self.assertEqual(Polynomial('3 -7 2 1 1 19 0 -2').degree, 3)
+        self.assertEqual(Polynomial('7 0 6 2 5 2 3 2 1 1 0 0').degree, 6)
+
+        # Zero polynomial has degree of "None"
+        self.assertEqual(Polynomial('1 0 0 0').degree, None)
 
     def test_iter(self):
         p = Polynomial('13 2 9 5 6 -4 2 1 1 1 0 -2')
