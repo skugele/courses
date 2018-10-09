@@ -1,5 +1,5 @@
 README: Programming Assignment 1 (10/9/2018)
-Author: Sean Kugele (skugele@memphis.edu - U000184373)
+Author: Sean Kugele (skugele@memphis.edu - U00184373)
 
 Prerequisites: Python 3
 
