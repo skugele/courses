@@ -1,3 +1,6 @@
+import re
+
+
 class Polynomial(object):
     def __init__(self, spec):
         self._spec = spec
@@ -23,8 +26,7 @@ class Polynomial(object):
 
     def __str__(self):
         p_terms = []
-        for i, c in enumerate(self._terms):
-            c = int(c) if float(c) == int(c) else round(c, 2)
+        for i, c in enumerate(map(lambda x: round(x, 2), self._terms)):
 
             if c == 0:
                 continue
@@ -33,7 +35,6 @@ class Polynomial(object):
                 term = str(c)
 
             else:
-                c = '' if c == 1 else c
 
                 if int(i) == 1:
                     term = '{}x'.format(str(c))
@@ -44,29 +45,48 @@ class Polynomial(object):
 
         result = ' + '.join(reversed(p_terms))
         result = result.replace(' + -', ' - ')
+        result = re.sub(r'(-?)(\D?)1.0x', r'\1\2x', result)
 
         return result
 
-    def __getitem__(self, item):
-        return self._terms[item]
+    def __getitem__(self, key):
+        return self._terms[key] if key < len(self) else 0.0
 
     def __setitem__(self, key, value):
+
+        # Automatically expand the number of terms if necessary.  This
+        # will not change the degree of the polynomial unless the added
+        # term is non-zero
+        if key >= len(self):
+            self._terms.extend([0.0] * (key - len(self) + 1))
+
         self._terms[key] = value
 
     def __eq__(self, other):
-        if isinstance(other, Polynomial):
-            return self._terms == other._terms
+        if not isinstance(other, Polynomial):
+            return False
 
-        return False
+        if self.degree != other.degree:
+            return False
 
-    def approx_equal(self, other, abs_tol=0.0, rel_tol=1e-09):
-        if isinstance(other, Polynomial):
-            if len(list(self.coefficients)) != len(list(other.coefficients)):
+        if self.degree is None:
+            return True
+
+        for i in range(0, self.degree + 1):
+            if self[i] != other[i]:
                 return False
 
-            for c1, c2 in zip(self.coefficients, other.coefficients):
-                if abs(c1 - c2) > max(rel_tol * max(abs(c1), abs(c2)), abs_tol):
-                    return False
+        return True
+
+    def approx_equal(self, o, abs_tol=1e-09, rel_tol=1e-06):
+        if not isinstance(o, Polynomial):
+            return False
+
+        for i in range(max(self.degree, o.degree) + 1):
+            abs_diff = abs(self[i] - o[i])
+            rel_threshold = rel_tol * max(abs(self[i]), abs(o[i]))
+            if abs_diff > max(rel_threshold, abs_tol):
+                return False
 
         return True
 
@@ -87,3 +107,7 @@ class Polynomial(object):
     def coefficients(self):
         for c in reversed(self._terms):
             yield c
+
+    def scale(self, scalar):
+        self._terms = [c * scalar for c in self._terms]
+        return self

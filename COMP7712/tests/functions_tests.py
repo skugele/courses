@@ -1,7 +1,45 @@
 from unittest import TestCase
 
-from functions import poly_divide, poly_multiply
+from functions import poly_divide, poly_multiply, poly_sum, interpolate
 from polynomial import Polynomial
+
+
+class PolySumTest(TestCase):
+
+    def test_sum(self):
+        p1 = Polynomial('0 0')
+        p2 = Polynomial('0 1')
+
+        # Test summation with non-zero and zero polynomial
+        self.assertEqual(poly_sum(p1, p2), Polynomial('0 1'))
+
+        p1 = Polynomial('1 17')
+        p2 = Polynomial('2 12 0 1')
+
+        # Test summation of two non-zero polynomial that have distinct
+        # non-zero elements.
+        self.assertEqual(poly_sum(p1, p2), Polynomial('2 12 1 17 0 1'))
+
+        # Test summation of two polynomials with non-zero coefficients
+        # in all shared terms
+        p1 = Polynomial('3 3 2 2 1 1')
+        p2 = Polynomial('4 4 3 3 2 2 1 1')
+        self.assertEqual(poly_sum(p1, p2), Polynomial('4 4 3 6 2 4 1 2'))
+
+
+class InterpolateTest(TestCase):
+    def test_valid(self):
+        self.assertTrue(Polynomial('1 1').approx_equal(interpolate([(1, 1), (2, 2)])))
+        self.assertTrue(Polynomial('2 1').approx_equal(interpolate([(-1, 1), (0, 0), (1, 1)])))
+        self.assertTrue(Polynomial('3 1').approx_equal(interpolate([(-1, -1), (0, 0), (1, 1), (2, 8)])))
+
+    def test_invalid(self):
+        self.assertRaises(ValueError, interpolate, [])
+        self.assertRaises(ValueError, interpolate, [(1, 1)])
+        self.assertRaises(ValueError, interpolate, [(1, 1), (1, 1)])
+
+        # X values must be distinct
+        self.assertRaises(ValueError, interpolate, [(1, 0), (1, 1)])
 
 
 class PolyMultiplyTest(TestCase):
@@ -78,5 +116,4 @@ class PolyDivideTest(TestCase):
         self.assertRaises(ValueError, poly_divide, Polynomial('1 2'), 2)
         self.assertRaises(ValueError, poly_divide, 2, Polynomial('1 2'))
         self.assertRaises(ValueError, poly_divide, 2, 2)
-
         self.assertRaises(ValueError, poly_divide, Polynomial('3 5 1 2'), Polynomial('2 1 0 1'))
