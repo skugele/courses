@@ -10,6 +10,7 @@ if __name__ == '__main__':
         a = float(input('Please provide a number: '))
         p2 = Polynomial([1, 1, 0, -a])
 
+        print('Results of dividing ({}) by ({}) is\n'.format(p1, p2))
         q, r = poly_divide(p1, p2)
         print('Quotient: {}\nRemainder: {}'.format(q, r))
 
