@@ -32,6 +32,9 @@ class InterpolateTest(TestCase):
         self.assertTrue(Polynomial('1 1').approx_equal(interpolate([(1, 1), (2, 2)])))
         self.assertTrue(Polynomial('2 1').approx_equal(interpolate([(-1, 1), (0, 0), (1, 1)])))
         self.assertTrue(Polynomial('3 1').approx_equal(interpolate([(-1, -1), (0, 0), (1, 1), (2, 8)])))
+        self.assertTrue(
+            Polynomial('3 0.0154 2 -0.8939 1 7.1818 0 -8.9092').approx_equal(
+                interpolate([(-1, -17), (3, 5), (2, 2), (50, 8)]), abs_tol=1e-3))
 
     def test_invalid(self):
         self.assertRaises(ValueError, interpolate, [])
