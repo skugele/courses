@@ -2,6 +2,10 @@ import re
 
 
 class Polynomial(object):
+    """
+    A class for representing arbitrary real coefficient polynomials
+    """
+
     def __init__(self, spec):
         self._spec = spec
         self._terms = []

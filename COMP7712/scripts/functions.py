@@ -3,7 +3,7 @@ from polynomial import Polynomial
 
 def interpolate(pts):
     """
-    Calculate a degree n-1 polynomial that is uniquely determined by the supplied list of distinct n points.
+    Calculate an interpolating polynomial for a supplied set of points.
 
     :param pts: a list of tuples (x,y)
     :return: a polynomial
@@ -47,6 +47,13 @@ def interpolate(pts):
 
 
 def poly_sum(p1, p2):
+    """
+    Adds the Polynomial arguments and returns the resulting Polynomial.
+
+    :param p1: a Polynomial
+    :param p2: a Polynomial
+    :return: a Polynomial
+    """
     # Result will have degree = max{degree(p1), degree(p2)}
 
     # If either of the polynomials is the zero polynomial, then
@@ -65,6 +72,13 @@ def poly_sum(p1, p2):
 
 
 def poly_multiply(p1, p2):
+    """
+    Multiplies the Polynomial arguments and returns the resulting Polynomial.
+
+    :param p1: a Polynomial
+    :param p2: a Polynomial
+    :return: a Polynomial
+    """
     # Initialize result polynomial
     r_degree = p1.degree + p2.degree
 
@@ -83,6 +97,14 @@ def poly_multiply(p1, p2):
 
 
 def poly_divide(p1, p2):
+    """
+    Divides an arbitrary degree Polynomial by a linear polynomial, and returns the resulting
+     Polynomial quotient and a remainder (if any).
+
+    :param p1: a Polynomial
+    :param p2: a linear (degree 1) Polynomial
+    :return: a tuple containing a quotient Polynomial and a remainder (as necessary)
+    """
     if not (isinstance(p1, Polynomial) and isinstance(p2, Polynomial)):
         raise ValueError('Both arguments must be polynomials')
 
