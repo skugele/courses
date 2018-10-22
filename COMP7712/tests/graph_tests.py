@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from graph import Graph, DepthFirstSearch, is_dag
+from graph import Graph, DepthFirstSearch, is_dag, topological_sort
 
 
 class GraphTest(TestCase):
@@ -131,14 +131,50 @@ class GraphTest(TestCase):
         dfs = DepthFirstSearch(g)
         dfs.execute()
 
-        self.assertFalse(dfs.is_backedge((1,2)))
-        self.assertFalse(dfs.is_backedge((2,3)))
-        self.assertTrue(dfs.is_backedge((3,1)))
+        self.assertFalse(dfs.is_backedge((1, 2)))
+        self.assertFalse(dfs.is_backedge((2, 3)))
+        self.assertTrue(dfs.is_backedge((3, 1)))
 
     def test_is_dag(self):
 
+        # No cycle - DAG
         g = Graph(n_vertices=3, edges=[(1, 2)])
         self.assertTrue(is_dag(g))
 
+        # Cycle - not a DAG
         g = Graph(n_vertices=3, edges=[(1, 2), (2, 3), (3, 1)])
         self.assertFalse(is_dag(g))
+
+        # No cycle, but disconnected - DAG
+        g = Graph(n_vertices=5, edges=[(1, 2), (3, 1), (3, 4)])
+        self.assertTrue(is_dag(g))
+
+    def test_topo_sort(self):
+        g = Graph(n_vertices=3, edges=[(1, 2)])
+        l = topological_sort(g)
+        self.verify_linearization(l, g)
+
+        g = Graph(n_vertices=5, edges=[(1, 2), (3, 1), (3, 4)])
+        l = topological_sort(g)
+        self.verify_linearization(l, g)
+
+        g = Graph(n_vertices=6, edges=[(1, 3), (2, 1), (2, 4), (4, 3), (3, 6), (3, 5)])
+        l = topological_sort(g)
+        print(l)
+        self.verify_linearization(l, g)
+
+        # Raise exception if cycle
+        g = Graph(n_vertices=3, edges=[(1, 2), (2, 3), (3, 1)])
+        self.assertRaises(ValueError, topological_sort, g)
+
+    def test_longest_path_in_dag(self):
+        g = Graph(n_vertices=6, edges=[(1, 3), (2, 1), (2, 4), (4, 3), (3, 6), (3, 5)])
+        p = find_longest_path(g)
+
+
+
+    def verify_linearization(self, l, g):
+        # Check that nodes later in the linearization do not have edges to any of the earlier nodes
+        for i in range(len(l)):
+            for j in range(i):
+                self.assertFalse(g.edge_exists((l[i], l[j])))

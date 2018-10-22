@@ -1,3 +1,6 @@
+import sys
+
+
 class Graph(object):
 
     def __init__(self, n_vertices, edges=None):
@@ -81,3 +84,31 @@ def is_dag(g):
                 has_cycle = True
 
     return not has_cycle
+
+
+def topological_sort(g):
+    if not is_dag(g):
+        raise ValueError('Graph contains cycles and can not be linearized')
+
+    dfs = DepthFirstSearch(g)
+    dfs.execute()
+
+    return sorted(range(1, g.n_vertices + 1), key=lambda k: dfs.post[k], reverse=True)
+
+
+def find_longest_path(g, v):
+    if not is_dag(g):
+        raise ValueError('Graph contains cycles and can not be linearized')
+
+    dist = [sys.maxsize] * (g.n_vertices + 1)
+    prev = [-1] * (g.n_vertices + 1)
+
+    dist[v] = 0
+    l = topological_sort(g)
+    for u in l:
+        for e in g.edges(u):
+            # Perform update
+            if dist[e[1]] > dist[u] - 1:
+                dist[e[1]] = dist[u] - 1
+                prev[e[1]] = u
+
