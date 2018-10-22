@@ -2,7 +2,6 @@ import sys
 
 
 class Graph(object):
-
     def __init__(self, n_vertices, edges=None):
         self.n_vertices = n_vertices
         self.n_edges = 0
@@ -33,7 +32,6 @@ class Graph(object):
 
 
 class DepthFirstSearch(object):
-
     def __init__(self, graph):
         self.graph = graph
         self.visited = [False] * (self.graph.n_vertices + 1)
@@ -112,5 +110,5 @@ def find_longest_path_distance(g, v):
                 dist[e[1]] = dist[u] - 1
                 prev[e[1]] = u
 
-    dist = list(map(lambda x: x*-1, dist))
+    dist = list(map(lambda x: x * -1, dist))
     return max(dist)
