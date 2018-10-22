@@ -1,4 +1,4 @@
 **/.idea
 **/_trial_temp
-./project/ros/workspace/devel/*
-./project/ros/workspace/build/*
+COMP8150/project/ros/workspace/devel/*
+COMP8150/project/ros/workspace/build/*
