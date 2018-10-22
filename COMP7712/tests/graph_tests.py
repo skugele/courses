@@ -167,6 +167,9 @@ class GraphTest(TestCase):
         self.assertRaises(ValueError, topological_sort, g)
 
     def test_longest_path_in_dag(self):
+        g = Graph(n_vertices=1, edges=[])
+        self.assertEqual(find_longest_path_distance(g, 1), 0)
+
         g = Graph(n_vertices=10, edges=[(2, 3), (3, 4), (4, 5), (5, 6)])
         self.assertEqual(find_longest_path_distance(g, 1), 0)
 
