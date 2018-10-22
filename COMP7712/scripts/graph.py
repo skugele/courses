@@ -96,7 +96,7 @@ def topological_sort(g):
     return sorted(range(1, g.n_vertices + 1), key=lambda k: dfs.post[k], reverse=True)
 
 
-def find_longest_path(g, v):
+def find_longest_path_distance(g, v):
     if not is_dag(g):
         raise ValueError('Graph contains cycles and can not be linearized')
 
@@ -112,3 +112,5 @@ def find_longest_path(g, v):
                 dist[e[1]] = dist[u] - 1
                 prev[e[1]] = u
 
+    dist = list(map(lambda x: x*-1, dist))
+    return max(dist)

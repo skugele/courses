@@ -1,10 +1,9 @@
 from unittest import TestCase
 
-from graph import Graph, DepthFirstSearch, is_dag, topological_sort
+from graph import Graph, DepthFirstSearch, is_dag, topological_sort, find_longest_path_distance
 
 
 class GraphTest(TestCase):
-
     def test_create_graph(self):
         g = Graph(n_vertices=5)
 
@@ -169,9 +168,13 @@ class GraphTest(TestCase):
 
     def test_longest_path_in_dag(self):
         g = Graph(n_vertices=6, edges=[(1, 3), (2, 1), (2, 4), (4, 3), (3, 6), (3, 5)])
-        p = find_longest_path(g)
+        self.assertEqual(find_longest_path_distance(g, 1), 2)
 
+        g = Graph(n_vertices=5, edges=[(1, 2), (3, 4), (3, 1)])
+        self.assertEqual(find_longest_path_distance(g, 1), 1)
 
+        g = Graph(n_vertices=10, edges=[(1, 2), (2, 3), (3, 4), (4, 5), (1, 6), (6, 7), (1, 8), (9, 10)])
+        self.assertEqual(find_longest_path_distance(g, 1), 4)
 
     def verify_linearization(self, l, g):
         # Check that nodes later in the linearization do not have edges to any of the earlier nodes
