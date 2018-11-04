@@ -34,16 +34,17 @@ def get_rgb_values(imgs):
     return rgb_values, colors
 
 
-def create_rgb_histogram(ax, rgb_values, colors, category):
+def create_rgb_histogram(ax, rgb_values, colors):
     ax.set_xlim([0, 255])
-    ax.set_ylim([0, 350])
     #
-    # ax[r, c].set_xlabel('RGB pixel value (0-255)')
-    ax.set_ylabel('# pixels with RGB value')
-    ax.set_title('Histogram for \"{}\" RGB-D images'.format(get_label(int(category))))
+    ax.set_xlabel('RGB pixel value (0-255)')
+    ax.set_ylabel('Proportion of pixels with value')
+
     ax.grid(True)
-    ax.hist(rgb_values, bins=64, density=False, color=map(lambda c: get_facecolor(c), colors),
-            weights=[np.ones_like(x) for x in rgb_values], label=map(lambda c: get_color_name(c), colors))
+    ax.hist(rgb_values, bins=256, density=False,
+            weights=[np.ones_like(x) / float(len(x)) for x in rgb_values],
+            color=map(lambda c: get_facecolor(c), colors),
+            label=map(lambda c: get_color_name(c), colors))
     ax.legend(loc='upper right')
     # ax.text(15, 300, get_label(int(category)), style='italic', fontsize=16, bbox={'facecolor': 'w'})
 
@@ -60,21 +61,26 @@ def create_rgb_histgrams_for_all_categories():
             imgs = np.copy(images_for_object[category])
             rgb_values, colors = get_rgb_values(imgs)
 
-            create_rgb_histogram(ax[r, c], rgb_values, colors, category)
+            create_rgb_histogram(ax[r, c], rgb_values, colors)
+            ax[r, c].set_title('\"{}\" RGB-D images'.format(get_label(int(category))))
 
-    fig.subplots_adjust(wspace=0.2, hspace=0.35)
+    fig.subplots_adjust(wspace=0.2, hspace=0.6)
     plt.show()
     plt.close()
 
 
-def create_histogram_from_image_spec(spec):
-    fix, ax = plt.subplot()
+def create_histogram_from_image_specs(specs, title):
+    fix, ax = plt.subplots()
 
-    rgb_values, colors = get_rgb_values(spec.data)
-    create_rgb_histogram(ax, rgb_values, colors, spec.category)
+    rgb_values, colors = get_rgb_values(np.asarray([s.data for s in specs]))
+    create_rgb_histogram(ax, rgb_values, colors)
+    ax.set_title(title)
 
     plt.show()
     plt.close()
 
 
-spec = image_specs
+# create_rgb_histgrams_for_all_categories()
+
+specs = find_image_specs_by_id(image_specs, ['50'])
+create_histogram_from_image_specs(specs, 'Histogram of RGB values from single "object 1" image')

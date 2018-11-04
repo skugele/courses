@@ -62,3 +62,7 @@ def get_image_specs(images_dir, labels, scaling_factor):
                 image_specs.append(spec)
 
     return sorted(image_specs, cmp=lambda x, y: int(x.id) - int(y.id))
+
+
+def find_image_specs_by_id(image_specs, ids):
+    return filter(lambda s: s.id in ids, image_specs)
