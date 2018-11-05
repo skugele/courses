@@ -3,6 +3,7 @@ import random
 from matplotlib.ticker import FuncFormatter
 
 from image_util import *
+from distance_metric import *
 import matplotlib.pyplot as plt
 
 
@@ -51,17 +52,24 @@ y = []
 x_1 = []
 x_2 = []
 
-# Hold out 50 images for testing
-# for spec in image_specs[0:250]:
-#     cs.append(int(spec.category))
-#     y.append(1 if spec.category == '6' else 0)
-#     x_1.append(np.abs(calc_l_avg(spec) - avg_l_avgs['6']))
-#     x_2.append(...)
-#     # print('[category: {}, id: {}, x_1: {} x_2: {} y:{}'.format(spec.category, spec.id, x_1[-1], x_2[-1], y[-1]))
+cmp_rgbs, _, _ = get_unique_rgbs_for_specs(find_image_specs_by_category(image_specs, ['6']))
+cmp_rgbs = cmp_rgbs[0:20]
 
-# plt.scatter(x_1, y, c=cs)
-# plt.xlabel(r'$x_1$')
-# plt.ylabel('y')
-# plt.title(r'Image Category vs Average $L_{avg}$')
-# plt.colorbar(format=FuncFormatter(get_label))
+# Hold out 50 images for testing
+for spec in image_specs[0:250]:
+    cs.append(int(spec.category))
+    y.append(1 if spec.category == '6' else 0)
+    x_1.append(np.abs(calc_l_avg(spec) - avg_l_avgs['6']))
+
+    rgbs, _, _ = get_unique_rgbs_for_specs([spec])
+    x_2.append(rgb_distance_from_cluster(rgbs, cmp_rgbs))
+    print('[category: {}, id: {}, x_1: {} x_2: {} y:{}'.format(spec.category, spec.id, x_1[-1], x_2[-1], y[-1]))
+
+plt.scatter(x_2, y, c=cs)
+plt.xlabel(r'$x_2$ (Sum of RGB Euclidean Distances)')
+# plt.xlabel(r'$x_1$ (Average $L_{avg}$)')
+plt.ylabel(r'y')
+# plt.title(r'$x_1$  vs $y$')
+plt.colorbar(format=FuncFormatter(get_label))
+plt.savefig('/home/skugele/Development/courses/COMP8150/project/figures/MultiRegressDistVsCategory.png')
 # plt.savefig('/home/skugele/Development/courses/COMP8150/project/figures/MultiRegressLavgVsCategory.png')

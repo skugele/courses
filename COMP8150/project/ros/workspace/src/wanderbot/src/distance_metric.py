@@ -22,15 +22,3 @@ def rgb_distance_from_cluster(rgbs, cmp_rgbs):
         s += v
 
     return s
-
-
-image_specs = get_image_specs(images_dir, labels=get_categories(labels_file), scaling_factor=0.1)
-category_specs = find_image_specs_by_category(image_specs, ['6'])
-
-target_spec = find_image_specs_by_id(image_specs, ['50'])
-target_rgb_values,_,_ = get_unique_rgbs_for_specs(target_spec)
-
-cmp_rgbs, _, _ = get_unique_rgbs_for_specs(category_specs)
-
-s = rgb_distance_from_cluster(target_rgb_values, cmp_rgbs[0:10])
-print(s)
