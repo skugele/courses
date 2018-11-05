@@ -2,11 +2,8 @@ from image_util import *
 
 import numpy as np
 import matplotlib.pyplot as plt
-import cv2
 
 image_specs = get_image_specs(images_dir, labels=get_categories(labels_file), scaling_factor=0.1)
-images = np.asarray([spec.data for spec in image_specs])
-
 images_for_object = {c: [] for c in map(str, range(1, 7))}
 
 for c in images_for_object.keys():
@@ -19,19 +16,6 @@ def get_facecolor(v):
 
 def get_color_name(v):
     return ['Blue', 'Green', 'Red'][v]
-
-
-def get_rgb_values(imgs):
-    rgb_values = []
-    colors = []
-
-    for color in range(3):
-        imgs = np.copy(imgs)
-
-        rgb_values.append(np.reshape(np.asarray(imgs[:, color::3]), (-1)))
-        colors.append(color)
-
-    return rgb_values, colors
 
 
 def create_rgb_histogram(ax, rgb_values, colors):

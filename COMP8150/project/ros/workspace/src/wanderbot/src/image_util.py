@@ -24,7 +24,7 @@ def get_categories(labels_file):
     return labels
 
 
-def get_label(category):
+def get_label(category, pos):
     if category in object_labels:
         return 'object {}'.format(int(category))
     elif category == multi_object_label:
@@ -66,3 +66,20 @@ def get_image_specs(images_dir, labels, scaling_factor):
 
 def find_image_specs_by_id(image_specs, ids):
     return filter(lambda s: s.id in ids, image_specs)
+
+
+def find_image_specs_by_category(image_specs, categories):
+    return filter(lambda s: s.category in categories, image_specs)
+
+
+def get_rgb_values(imgs):
+    rgb_values = []
+    colors = []
+
+    for color in range(3):
+        imgs = np.copy(imgs)
+
+        rgb_values.append(np.reshape(np.asarray(imgs[:, color::3]), (-1)))
+        colors.append(color)
+
+    return rgb_values, colors
