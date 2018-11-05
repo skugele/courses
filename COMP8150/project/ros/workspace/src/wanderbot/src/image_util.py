@@ -12,6 +12,10 @@ object_labels = [i for i in range(1, 5)]
 multi_object_label = 5
 no_object_label = 6
 
+RED_POS = 2
+GREEN_POS = 1
+BLUE_POS = 0
+
 
 def get_categories(labels_file):
     labels = {}
@@ -24,7 +28,7 @@ def get_categories(labels_file):
     return labels
 
 
-def get_label(category, pos):
+def get_label(category, pos=None):
     if category in object_labels:
         return 'object {}'.format(int(category))
     elif category == multi_object_label:

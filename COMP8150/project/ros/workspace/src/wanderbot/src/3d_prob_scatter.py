@@ -16,7 +16,7 @@ images_for_object = {c: [] for c in map(str, range(1, 7))}
 for c in images_for_object.keys():
     images_for_object[c] = np.asarray([spec.data for spec in filter(lambda s: s.category == c, image_specs)])
 
-specs = find_image_specs_by_category(image_specs, ['2'])
+specs = find_image_specs_by_category(image_specs, ['6'])
 # specs = find_image_specs_by_id(image_specs, ['50'])
 # specs = image_specs
 imgs = np.asarray([s.data for s in specs])
@@ -62,6 +62,7 @@ ax.set_ylabel('Green')
 ax.set_zlabel('Red')
 
 plt.show()
+# plt.savefig(pad_inches=0.2, fname='/home/skugele/Development/courses/COMP8150/project/figures/No Objects Category 3D Probability Scatter Plot.png')
 # #
 
 #
