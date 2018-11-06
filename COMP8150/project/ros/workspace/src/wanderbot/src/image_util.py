@@ -8,6 +8,8 @@ import collections
 images_dir = '/var/local/data/skugele/COMP8150/project/images'
 labels_file = '/var/local/data/skugele/COMP8150/project/images/labels'
 
+synthetic_images_dir = '/var/local/data/skugele/COMP8150/project/synthetic_images'
+
 object_labels = [i for i in range(1, 5)]
 multi_object_label = 5
 no_object_label = 6
@@ -87,3 +89,25 @@ def get_rgb_values(imgs):
         colors.append(color)
 
     return rgb_values, colors
+
+
+def rel_luminance(r, g, b):
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b
+
+
+def calc_l_avg(spec):
+    rgb_values = np.reshape(spec.data, (-1, 3))
+
+    r_vals = rgb_values[:, RED_POS]
+    b_vals = rgb_values[:, BLUE_POS]
+    g_vals = rgb_values[:, GREEN_POS]
+
+    return (np.average(rel_luminance(r_vals, g_vals, b_vals)))
+
+
+def calc_avg_l_avgs(image_specs):
+    avg_l_avgs = {}
+    for c in map(str, range(1, 7)):
+        avg_l_avgs[c] = np.average([calc_l_avg(spec) for spec in find_image_specs_by_category(image_specs, c)])
+
+    return avg_l_avgs

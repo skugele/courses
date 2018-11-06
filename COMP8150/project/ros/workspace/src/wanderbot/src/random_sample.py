@@ -26,15 +26,17 @@ for c in map(str, range(1, 7)):
     rgb_values, counts, prob = get_unique_rgbs_for_specs(specs)
     sorted_order_indices = np.asarray(list(reversed(np.argsort(counts))))
 
-    for i in range(1, 51):
-        indices = np.random.choice(np.arange(0, len(prob)), size=(640 * 480), p=prob)
-        chosen_rgb = rgb_values[indices]
-
-        img = np.reshape(chosen_rgb, (480, 640, 3))
-        img_sorted = np.sort(img, axis=2)
-        cv2.imshow('{}_{}'.format(c, i), img_sorted)
-        filename = '{}_{}.png'.format('synthetic',str(i))
-        cv2.imwrite('/'.join(['/var/local/data/skugele/COMP8150/project/synthetic_images', c, filename]), img_sorted)
+    print(prob.shape)
+    exit()
+    # for i in range(1, 51):
+    #     indices = np.random.choice(np.arange(0, len(prob)), size=(640 * 480), p=prob)
+    #     chosen_rgb = rgb_values[indices]
+    #
+    #     img = np.reshape(chosen_rgb, (480, 640, 3))
+    #     img_sorted = np.sort(img, axis=2)
+    #     cv2.imshow('{}_{}'.format(c, i), img_sorted)
+    #     filename = '{}_{}.png'.format('synthetic',str(i))
+    #     cv2.imwrite('/'.join(['/var/local/data/skugele/COMP8150/project/synthetic_images', c, filename]), img_sorted)
         # cv2.waitKey(3)
 
 # ax = fig.add_subplot(111, projection='3d')
