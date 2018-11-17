@@ -1,61 +1,118 @@
 import numpy as np
 import numpy.ma as ma
 
+import matplotlib.pyplot as plt
 from image_util import *
 
+# Most probable RGB values for each object class
+CYLINDER_BGRS = [[0, 113, 113]]  # Yellow Cylinder
 
-# Determine RGB values and ranges for each class
+CUBE_BGRS = [
+    [0, 0, 107],  # Red Cube
+    [107, 0, 0]  # Blue Cube
+]
 
-def is_cylinder(rgb):
-    CYLINDER_RGB = [[113, 113, 0]]
+SPHERE_BGRS = [[0, 111, 0]]  # Green Sphere
 
-    return True
+BACKGROUND_BGRS = [
+    [178, 178, 178],  # Sky
+    [31, 78, 102],  # Wall 1
+    [45, 92, 116],  # Wall 2
+    [55, 55, 55],  # Ground
+]
 
+PARENT_DIR = '/var/local/data/skugele/COMP8150/project/images'
 
-def is_sphere(rgb):
-    return True
+TRAIN_OUT_DIR = os.path.join(PARENT_DIR, 'train')
+TRAIN_GT_OUT_DIR = os.path.join(PARENT_DIR, 'trainannot')
+TEST_OUT_DIR = os.path.join(PARENT_DIR, 'test')
+TEST_GT_OUT_DIR = os.path.join(PARENT_DIR, 'testannot')
+VAL_OUT_DIR = os.path.join(PARENT_DIR, 'validate')
+VAL_GT_OUT_DIR = os.path.join(PARENT_DIR, 'validateannot')
 
+TRAIN_MANIFEST_FILE = os.path.join(PARENT_DIR, 'train.txt')
+TEST_MANIFEST_FILE = os.path.join(PARENT_DIR, 'test.txt')
+VAL_MANIFEST_FILE = os.path.join(PARENT_DIR, 'validate.txt')
 
-def is_cube(rgb):
-    return True
+DISPLAY_RESULTS = False
+WRITE_RESULTS = True
 
-
-def is_background(rgb):
-    BACKGROUND_RGBS = [
-        [178, 178, 178],  # Sky
-        [102, 78, 31],  # Wall 1
-        [116, 92, 45],  # Wall 2
-        [55, 55, 55],  # Ground
-    ]
-
-    return True
-
-
-def similarity(rgb, cmp_rgbs):
-    min = 9999
-    for cmp in cmp_rgbs:
-        min = np.min([min, np.linalg.norm(rgb - cmp)])
-    return min
+TRAIN_PERCENTAGE = 0.8
+TEST_PERCENTAGE = 1 - TRAIN_PERCENTAGE
+VALIDATE_PERCENTAGE = 0.2  # A percentage of the test data
 
 
-image_specs = get_image_specs(images_dir, labels=get_categories(labels_file), scaling_factor=1)
-target_spec = find_image_specs_by_id(image_specs, ['43'])
-image = target_spec[0].data
-image_orig = np.reshape(image, (480, 640, 3))
-# norm_array = np.linalg.norm(image_orig - [178, 178, 178], axis=2)
+def display_ground_truth(image):
+    plt.imshow(ground_truth.squeeze(), cmap='gray', interpolation='bicubic')
+    plt.xticks([]), plt.yticks([])  # to hide tick values on X and Y axis
+    plt.show()
 
-# mask = np.ma.make_mask(norm_array < 10, copy=True, shrink=False, dtype=np.bool)
-# mask = norm_array < 10
-# mask = mask.astype(int)
-# mask = np.repeat(mask[...,None],3,axis=2)
 
-# n = np.linalg.norm(image_orig - [55,55,55], axis=2)
-n = np.linalg.norm(image_orig - [178,178,178], axis=2)
-mask = n < 20
-NEW_PIXEL_VALUE = [255,255,255]
-image_new = image_orig.copy()
-image_new[mask] = NEW_PIXEL_VALUE
+def display_image(image, waittime):
+    cv2.imshow('original image', image)
+    cv2.waitKey(waittime)
 
-# cv2.imshow('original image', image_orig)
-cv2.imshow('masked image', image_new)
-cv2.waitKey(0)
+
+categories = {1: CYLINDER_BGRS, 2: CUBE_BGRS, 3: SPHERE_BGRS}
+scaling_factor = .25
+dims = 480, 640
+scaled_dims = map(lambda dim: int(dim * scaling_factor), dims)
+n_rgb_channels = 3
+n_grayscale_channels = 1
+similarity_threshold = 40
+
+count = 1
+image_specs = get_image_specs(images_dir, labels=get_categories(labels_file), scaling_factor=scaling_factor)
+for spec in image_specs:
+    image = np.reshape(spec.data, newshape=(scaled_dims[0], scaled_dims[1], n_rgb_channels))
+
+    # Create a grayscale image.  0 value is considered "background mask".  Other mask values
+    # are set in the categories dict.
+    ground_truth = np.zeros(shape=(scaled_dims[0], scaled_dims[1], n_grayscale_channels))
+
+    # if image pixels are "similar enough" to that object class then set the ground truth
+    # pixel values to the id for that class
+    for category_id, bgrs in categories.iteritems():
+        for bgr in bgrs:
+            norms = np.linalg.norm(image - bgr, axis=2)
+            category_mask = norms < similarity_threshold
+            ground_truth[category_mask] = category_id
+
+    if DISPLAY_RESULTS:
+        display_ground_truth(ground_truth)
+        display_image(image, 0)
+
+    # Randomly choose to assign to train, test
+    is_train = np.random.uniform() < TRAIN_PERCENTAGE
+
+    # Randomly split test data into test/validate
+    is_validate = is_train and (np.random.uniform() < VALIDATE_PERCENTAGE)
+
+    if WRITE_RESULTS:
+        image_filename = os.path.join('image_{:07d}.png'.format(count))
+        ground_truth_filename = 'image_gt_{:07d}.png'.format(count)
+
+        # Update manifest
+        manifest = VAL_MANIFEST_FILE if is_validate \
+            else TRAIN_MANIFEST_FILE if is_train \
+            else TEST_MANIFEST_FILE
+
+        image_dir = VAL_OUT_DIR if is_validate \
+            else TRAIN_OUT_DIR if is_train \
+            else TEST_OUT_DIR
+
+        ground_truth_dir = VAL_GT_OUT_DIR if is_validate \
+            else TRAIN_GT_OUT_DIR if is_train \
+            else TEST_GT_OUT_DIR
+
+        image_filepath = os.path.join(image_dir, image_filename)
+        ground_truth_filename = os.path.join(ground_truth_dir, ground_truth_filename)
+
+        with open(manifest, 'a') as fd:
+            fd.write(' '.join([image_filepath, ground_truth_filename, '\n']))
+
+        # Save image and ground truth
+        cv2.imwrite(image_filepath, image)
+        cv2.imwrite(ground_truth_filename, ground_truth)
+
+    count += 1
