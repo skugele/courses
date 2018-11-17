@@ -52,7 +52,7 @@ def process_image(filename, scaling_factor):
 
 
 def get_image_specs(images_dir, labels, scaling_factor):
-    img_match_regex = re.compile('image_(\d+).png$')
+    img_match_regex = re.compile('image_([1-9]\d+).png$')
 
     image_specs = []
     for root, _, files in os.walk(images_dir):

@@ -30,6 +30,10 @@ TEST_GT_OUT_DIR = os.path.join(PARENT_DIR, 'testannot')
 VAL_OUT_DIR = os.path.join(PARENT_DIR, 'validate')
 VAL_GT_OUT_DIR = os.path.join(PARENT_DIR, 'validateannot')
 
+OUT_DIRS = [TRAIN_OUT_DIR, TRAIN_GT_OUT_DIR,
+            TEST_OUT_DIR, TEST_GT_OUT_DIR,
+            VAL_OUT_DIR, VAL_GT_OUT_DIR]
+
 TRAIN_MANIFEST_FILE = os.path.join(PARENT_DIR, 'train.txt')
 TEST_MANIFEST_FILE = os.path.join(PARENT_DIR, 'test.txt')
 VAL_MANIFEST_FILE = os.path.join(PARENT_DIR, 'validate.txt')
@@ -53,13 +57,19 @@ def display_image(image, waittime):
     cv2.waitKey(waittime)
 
 
-categories = {1: CYLINDER_BGRS, 2: CUBE_BGRS, 3: SPHERE_BGRS}
+categories = {1: CYLINDER_BGRS, 2: CUBE_BGRS, 3: SPHERE_BGRS}  # Background BGRS implicitly have key = 0
+n_categories = len(categories) + 1
+
 scaling_factor = .25
 dims = 480, 640
 scaled_dims = map(lambda dim: int(dim * scaling_factor), dims)
 n_rgb_channels = 3
 n_grayscale_channels = 1
 similarity_threshold = 40
+
+if WRITE_RESULTS:
+    for path in OUT_DIRS:
+        os.mkdir(path)
 
 count = 1
 image_specs = get_image_specs(images_dir, labels=get_categories(labels_file), scaling_factor=scaling_factor)
@@ -72,11 +82,17 @@ for spec in image_specs:
 
     # if image pixels are "similar enough" to that object class then set the ground truth
     # pixel values to the id for that class
+    obj_classes = [0 for n in range(n_categories + 1)]
     for category_id, bgrs in categories.iteritems():
         for bgr in bgrs:
             norms = np.linalg.norm(image - bgr, axis=2)
             category_mask = norms < similarity_threshold
             ground_truth[category_mask] = category_id
+
+            if True in category_mask:
+                obj_classes[category_id] = 1
+            else:
+                obj_classes[0] = 1
 
     if DISPLAY_RESULTS:
         display_ground_truth(ground_truth)
@@ -109,7 +125,7 @@ for spec in image_specs:
         ground_truth_filename = os.path.join(ground_truth_dir, ground_truth_filename)
 
         with open(manifest, 'a') as fd:
-            fd.write(' '.join([image_filepath, ground_truth_filename, '\n']))
+            fd.write(' '.join([image_filepath, ground_truth_filename, ''.join(map(str, obj_classes)), '\n']))
 
         # Save image and ground truth
         cv2.imwrite(image_filepath, image)
