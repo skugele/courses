@@ -71,6 +71,22 @@ def get_image_specs(images_dir, labels, scaling_factor):
     return sorted(image_specs, cmp=lambda x, y: int(x.id) - int(y.id))
 
 
+def get_all_image_files(dirs):
+    img_match_regex = re.compile('image_([1-9]\d+).png$')
+
+    filenames = []
+    for dir in dirs:
+        for root, _, files in os.walk(dir):
+            files = filter(lambda f: img_match_regex.match(f), files)
+            for file in files:
+                found = img_match_regex.search(file)
+                if found:
+                    filename = '/'.join([root, file])
+                    filenames.append(filename)
+
+    return filenames
+
+
 def find_image_specs_by_id(image_specs, ids):
     return filter(lambda s: s.id in ids, image_specs)
 

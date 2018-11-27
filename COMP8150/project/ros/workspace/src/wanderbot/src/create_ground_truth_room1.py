@@ -21,7 +21,10 @@ BACKGROUND_BGRS = [
     [55, 55, 55],  # Ground
 ]
 
-PARENT_DIR = '/var/local/data/skugele/COMP8150/project/images'
+PARENT_DIR = '/var/local/data/skugele/COMP8150/project/room1'
+
+IMAGE_DIRS = [#os.path.join(PARENT_DIR, 'room1/images'),
+              os.path.join(PARENT_DIR, 'images'),]
 
 TRAIN_OUT_DIR = os.path.join(PARENT_DIR, 'train')
 TRAIN_GT_OUT_DIR = os.path.join(PARENT_DIR, 'trainannot')
@@ -72,9 +75,11 @@ if WRITE_RESULTS:
         os.mkdir(path)
 
 count = 1
-image_specs = get_image_specs(images_dir, labels=get_categories(labels_file), scaling_factor=scaling_factor)
-for spec in image_specs:
-    image = np.reshape(spec.data, newshape=(scaled_dims[0], scaled_dims[1], n_rgb_channels))
+
+
+for f in get_all_image_files(IMAGE_DIRS):
+    image = process_image(f, scaling_factor)
+    image = np.reshape(image, newshape=(scaled_dims[0], scaled_dims[1], n_rgb_channels))
 
     # Create a grayscale image.  0 value is considered "background mask".  Other mask values
     # are set in the categories dict.
@@ -82,7 +87,7 @@ for spec in image_specs:
 
     # if image pixels are "similar enough" to that object class then set the ground truth
     # pixel values to the id for that class
-    obj_classes = [0 for n in range(n_categories + 1)]
+    obj_classes = [0 for n in range(n_categories)]
     for category_id, bgrs in categories.iteritems():
         for bgr in bgrs:
             norms = np.linalg.norm(image - bgr, axis=2)
