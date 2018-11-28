@@ -8,6 +8,8 @@ CYLINDER_CATEGORY_ID = 1
 CUBE_CATEGORY_ID = 2
 SPHERE_CATEGORY_ID = 3
 
+N_CATEGORIES = 4 # Background has implicit category id = 0
+
 DataSet = collections.namedtuple('DataSet', ['data_dirs', 'bgrs_dict'])
 
 dataset1 = DataSet(data_dirs=['/var/local/data/skugele/COMP8150/project/room1/images'],
@@ -27,6 +29,39 @@ dataset2 = DataSet(data_dirs=['/var/local/data/skugele/COMP8150/project/room2/im
                        SPHERE_CATEGORY_ID: [
                            [107, 0, 0],  # Blue Sphere
                            [0, 113, 113]  # Yellow Sphere
+                       ]
+                   }
+                   )
+
+dataset3 = DataSet(data_dirs=['/var/local/data/skugele/COMP8150/project/cube_world/images'],
+                   bgrs_dict={
+                       CUBE_CATEGORY_ID: [
+                           [107, 0, 0],  # Blue Cube
+                           [0, 113, 113],  # Yellow Cube
+                           [0, 0, 107],  # Red Cube
+                           [0, 111, 0]  # Green Cube
+                       ]
+                   }
+                   )
+
+dataset4 = DataSet(data_dirs=['/var/local/data/skugele/COMP8150/project/cylinder_world/images'],
+                   bgrs_dict={
+                       CYLINDER_CATEGORY_ID: [
+                           [107, 0, 0],  # Blue Cylinder
+                           [0, 113, 113],  # Yellow Cylinder
+                           [0, 0, 107],  # Red Cylinder
+                           [0, 111, 0]  # Green Cylinder
+                       ]
+                   }
+                   )
+
+dataset5 = DataSet(data_dirs=['/var/local/data/skugele/COMP8150/project/sphere_world/images'],
+                   bgrs_dict={
+                       SPHERE_CATEGORY_ID: [
+                           [107, 0, 0],  # Blue Sphere
+                           [0, 113, 113],  # Yellow Sphere
+                           [0, 0, 107],  # Red Sphere
+                           [0, 111, 0]  # Green Sphere
                        ]
                    }
                    )
@@ -51,9 +86,9 @@ VAL_MANIFEST_FILE = os.path.join(OUTPUT_DIR, 'validate.txt')
 DISPLAY_RESULTS = False
 WRITE_RESULTS = True
 
-TRAIN_PERCENTAGE = 0.8
+TRAIN_PERCENTAGE = 0.9
 TEST_PERCENTAGE = 1 - TRAIN_PERCENTAGE
-VALIDATE_PERCENTAGE = 0.2  # A percentage of the test data
+VALIDATE_PERCENTAGE = 0.1  # A percentage of the test data
 
 
 def display_ground_truth(image):
@@ -80,7 +115,13 @@ if WRITE_RESULTS:
 
 count = 1
 
-datasets = [dataset1, dataset2]
+datasets = [
+    dataset1,
+    dataset2,
+    dataset3,
+    dataset4,
+    dataset5
+]
 
 for dataset in datasets:
     for f in get_all_image_files(dataset.data_dirs):
@@ -93,7 +134,7 @@ for dataset in datasets:
 
         # if image pixels are "similar enough" to that object class then set the ground truth
         # pixel values to the id for that class
-        obj_classes = [0 for n in range(len(dataset.bgrs_dict) + 1)]
+        obj_classes = [0 for n in range(N_CATEGORIES)]
         for category_id, bgrs in dataset.bgrs_dict.iteritems():
             for bgr in bgrs:
                 norms = np.linalg.norm(image - bgr, axis=2)
