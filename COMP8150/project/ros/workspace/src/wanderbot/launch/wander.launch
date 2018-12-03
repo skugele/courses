@@ -1,14 +1,23 @@
 <launch>
 
     <arg name="model" default="waffle" doc="model type [burger, waffle, waffle_pi]"/>
+
+<!--simple_room1.xml
+-->
     <arg name="x_pos" default="5.0"/>
     <arg name="y_pos" default="1.5"/>
     <arg name="z_pos" default="0"/>
 
+<!--simple_room2.xml
+    <arg name="x_pos" default="-10.5"/>
+    <arg name="y_pos" default="-3"/>
+    <arg name="z_pos" default="0"/>
+-->
+
     <!-- Start Gazebo with empty world -->
     <include file="$(find wanderbot)/gazebo/simple_room.launch">
 	<arg name="paused" default="true"/>
-	<arg name="world_name" default="$(find wanderbot)/gazebo/worlds/simple_room1.xml"/>
+	<arg name="world_name" default="$(find wanderbot)/gazebo/worlds/cylinder_world.xml"/>
     </include>
 
     <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher"/>
