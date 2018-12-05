@@ -109,10 +109,10 @@ TRAIN_MANIFEST_FILE = os.path.join(OUTPUT_DIR, 'train.txt')
 TEST_MANIFEST_FILE = os.path.join(OUTPUT_DIR, 'test.txt')
 VAL_MANIFEST_FILE = os.path.join(OUTPUT_DIR, 'validate.txt')
 
-DISPLAY_RESULTS = True
-WRITE_RESULTS = False
+DISPLAY_RESULTS = False
+WRITE_RESULTS = True
 
-TRAIN_PERCENTAGE = 0.9
+TRAIN_PERCENTAGE = 0.8
 TEST_PERCENTAGE = 1 - TRAIN_PERCENTAGE
 VALIDATE_PERCENTAGE = 0.1  # A percentage of the test data
 
@@ -122,8 +122,8 @@ cube = [150, 100, 200]  # Purple
 sphere = [200, 50, 50]  # Pale Red
 
 
-def scale_image(image, dims, factor):
-    return np.reshape(image, newshape=(dims[0] * factor, dims[1] * factor, -1))
+def scale_image(image, scaling_factor):
+    return cv2.resize(image, None, fx=scaling_factor, fy=scaling_factor)
 
 
 def display_image(image):
@@ -160,12 +160,11 @@ def display_ground_truth(image):
     plt.show()
 
 
-scaling_factor = .25
+scaling_factor = 0.15
 dims = 480, 640
 scaled_dims = map(lambda dim: int(dim * scaling_factor), dims)
 n_rgb_channels = 3
 n_grayscale_channels = 1
-similarity_threshold = 45
 
 if WRITE_RESULTS:
     for path in OUT_DIRS:
@@ -174,11 +173,11 @@ if WRITE_RESULTS:
 count = 1
 
 datasets = [
-    # dataset1,
-    # dataset2,
+    dataset1,
+    dataset2,
     dataset3,
-    # dataset4,
-    # dataset5
+    dataset4,
+    dataset5
 ]
 
 for dataset in datasets:
@@ -189,6 +188,10 @@ for dataset in datasets:
         # Create a grayscale image.  0 value is considered "background mask".  Other mask values
         # are set in the categories dict.
         ground_truth = np.zeros(shape=(dims[0], dims[1], n_grayscale_channels))
+
+        # Pre-processing of image and ground truth
+        image = scale_image(image, scaling_factor)
+        ground_truth = scale_image(ground_truth, scaling_factor)
 
         # if image pixels are "similar enough" to that object class then set the ground truth
         # pixel values to the id for that class
@@ -240,10 +243,7 @@ for dataset in datasets:
                 fd.write(' '.join([image_filepath, ground_truth_filename, ''.join(map(str, obj_classes)), '\n']))
 
             # Save image and ground truth
-            scaled_image = scale_image(image, dims, scaling_factor)
-            scaled_gt = scale_image(ground_truth, dims, scaling_factor)
-
-            cv2.imwrite(image_filepath, scaled_image)
-            cv2.imwrite(ground_truth_filename, scaled_gt)
+            cv2.imwrite(image_filepath, image)
+            cv2.imwrite(ground_truth_filename, ground_truth)
 
         count += 1
